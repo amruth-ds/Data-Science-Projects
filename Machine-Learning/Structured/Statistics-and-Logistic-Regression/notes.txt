@@ -1,1 +1,20 @@
+Road Traffic Accident (RTA) Data Set (EDA - Statistics - Logistic Regression)
+
+Answered the following questions
+1.	How many children (<= 18 years) have died in the accident and how many of them are males and females?											
+2.	How many children had taken alcohol? Were they riders or pillion when they died? 											
+3.	How many children have died immediately in the accident as pillion riders who had consumed alcolhol? 											
+4.	How many have died under the influence of alcohol/drug and without wearing helmet?											
+5.	How many of them have died between the age group of 31 - 40 years inspite of wearing helmet?											
+6.	What is the ratio of male and female who died on the spot?											
+7.	Whai is the medianal survival time  and IQR of RTA victims who died in the hospital?											
+8.	How many of them have died in the hospital for whom wearing of helmet details not available? Do you think these people could have wore helmet at the time of accident?											
+9.	What is the medianal period of coma (hrs) and IQR of RTA victims who died in the hospital?											
+10.	What is the ratio of students to bussinessmen who died in RTA under the influence of alcohol?											
+11.	State some of the hypothesis which may be formulated based on this data?  And test these hypothesis											
+12.	Is there sufficient data to test these hypothesis? If so use the available and test those hypothesis. 											
+13.	Use appropriaate graphs to present the data											
+14.	What are the different types of vehicles used?											
+15.	Considering 0 for survival of Rider and 1 for death fit a Logistic regression model for the data by treating all other variables has explanatory variables
+
 
