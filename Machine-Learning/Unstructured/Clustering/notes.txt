@@ -1,1 +1,18 @@
+Clustering Methods :
 
+1. Density-Based Methods : These methods consider the clusters as the dense region having some similarity and different from the lower dense region of the space. These methods have good accuracy and ability to merge two clusters.Example DBSCAN (Density-Based Spatial Clustering of Applications with Noise) , OPTICS (Ordering Points to Identify Clustering Structure) etc.
+
+2. Hierarchical Based Methods : The clusters formed in this method forms a tree type structure based on the hierarchy. New clusters are formed using the previously formed one. It is divided into two category
+-> Agglomerative (bottom up approach)
+-> Divisive (top down approach) .
+examples CURE (Clustering Using Representatives), BIRCH (Balanced Iterative Reducing Clustering and using Hierarchies) etc.
+
+3. Partitioning Methods : These methods partition the objects into k clusters and each partition forms one cluster. This method is used to optimize an objective criterion similarity function such as when the distance is a major parameter example K-means, CLARANS (Clustering Large Applications based upon randomized Search) etc.
+
+4. Grid-based Methods : In this method the data space are formulated into a finite number of cells that form a grid-like structure. All the clustering operation done on these grids are fast and independent of the number of data objects example STING (Statistical Information Grid), wave cluster, CLIQUE (CLustering In Quest) etc.
+
+Steps Performed:
+1. Here in the data set we are applying basic Kmeans clustering and Agglomerative Clustering
+2. Elbow curve is used to understand the number of cluster need to be created for a particular data in case of Kmeans Clustering and dendrogram used for Agglomerative Clustering 
+3. Scatter plots for visualizing the cluster formations
+4. Study about eucledian distance and centeroid formations in clustering for better understanding about Kmeans clustering and study about single point linkage , average linkage and complete linkage .
