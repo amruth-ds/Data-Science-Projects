@@ -1,1 +1,11 @@
-
+Regression:Sales of items in shops
+1. How to divide numerical and categorical columns in a data frame
+2. Cleaning outliers
+3. Imputing Missing values 
+4.  I have tried to impute missing values by creating a model as the column with missing values is a categorical column and replacing missiing values with mode is biasing toward the values which is more in count.So created a naive bias model to predict the missing values of that column 'Outlet_Size'
+5. Visualizing the box plots of all columns
+6. Skewness Test and Log Transformation to remove skewness
+7. Residual plot visualization
+8. Backward elimination for feature selection
+9. Validation performance with regularization techniques
+10. Model trained using Linear Regression Algorithm.
