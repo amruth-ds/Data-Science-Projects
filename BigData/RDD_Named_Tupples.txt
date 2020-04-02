@@ -1,0 +1,42 @@
+Amruth Muddana
+19125760012
+
+#Loading the Orders Dataset
+ordersRDD=sc.textFile('/FileStore/tables/orders')
+ordersRDD.collect()
+
+#Computing Named tuple RDD
+from collections import namedtuple
+Orders = namedtuple('Orders', 'order_id, order_date,order_customer_id,order_status')
+orders_tuple_rdd = ordersRDD.map(lambda l: Orders(order_id=int(l.split(',')[0]), order_date=l.split(',')[1],order_customer_id=int(l.split(',')[2]),order_status=l.split(',')[3]))
+orders_tuple_rdd.collect()
+
+#Question 1 : Count orders by status:
+from operator import add
+orders_tuple_rdd.map(lambda x : (x.order_status,1)).reduceByKey(add).collect()
+
+#Question 2 : Percentage of closed orders
+from operator import add
+counta=orders_tuple_rdd.count()
+status_COunt_RDD=orders_tuple_rdd.map(lambda x : (x.order_status,1)).reduceByKey(add).filter(lambda x:x[0]=='CLOSED').map(lambda x:(x[0],(x[1]*100/counta))).collect()
+status_COunt_RDD
+
+#Question 3 : Average revenue per order
+from operator import add
+order_itemsRDD=sc.textFile('/FileStore/tables/order_items')
+from collections import namedtuple
+Order_items = namedtuple('Order_items', 'order_items_id, order_item_order_id,order_item_product_id,order_item_quantity,order_item_subtotal,order_item_product_price')
+order_items_tuple_rdd = order_itemsRDD.map(lambda l: Order_items(order_items_id=int(l.split(',')[0]), order_item_order_id=int(l.split(',')[1]),order_item_product_id=int(l.split(',')[2]),order_item_quantity=int(l.split(',')[3]),order_item_subtotal=float(l.split(',')[4]),order_item_product_price=float(l.split(',')[5])))
+rdd1=order_items_tuple_rdd.map(lambda x:(x.order_item_order_id,x.order_item_subtotal))
+aTuple = (0,0)
+rdd2 = rdd1.aggregateByKey(aTuple, lambda a,b: (a[0] + b,    a[1] + 1),
+                                       lambda a,b: (a[0] + b[0], a[1] + b[1]))
+finalResult = rdd2.mapValues(lambda v: v[0]/v[1]).sortByKey(True).collect()
+finalResult
+
+dframe = spark.createDataFrame(order_items_tuple_rdd)
+display(dframe)
+dframe.show()
+dframe.createOrReplaceTempView('orderitems')
+%sql
+select order_item_order_id,avg(order_item_subtotal) from orderitems group by order_item_order_id order by order_item_order_id

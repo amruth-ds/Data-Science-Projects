@@ -1,0 +1,51 @@
+Amruth Muddana - 19125760012
+
+#Creating a HDFS Directory and loading CSV files into Directory from local
+[cloudera@quickstart ~]$ hadoop fs -mkdir /user/cloudera/SparkLearning/Movies
+[cloudera@quickstart ~]$ hadoop fs -mkdir /user/cloudera/SparkLearning/Ratings
+[cloudera@quickstart ~]$ hadoop fs -put Downloads/movies.csv /user/cloudera/SparkLearning/Movies
+[cloudera@quickstart ~]$ hadoop fs -put Downloads/ratings.csv /user/cloudera/SparkLearning/Ratings
+
+
+
+Question 1
+# Removing the Headers
+dataPath='/user/cloudera/SparkLearning/Movies'
+moviesRDD=sc.textFile(dataPath)
+header1 = moviesRDD.first()
+moviesNoHeaderRDD=moviesRDD.filter(lambda x : x != header1)
+
+dataPath2='/user/cloudera/SparkLearning/Ratings'
+ratingsRDD=sc.textFile(dataPath2)
+header2 = ratingsRDD.first()
+ratingsNoHeaderRDD=ratingsRDD.filter(lambda x : x != header2)
+
+# Creating the Map List of (Movie ID,Movie Name) and (Movie ID,1)
+moviesMapRDD=moviesNoHeaderRDD.map(lambda x : (int(x.split(',')[0]),x.split(',')[1]))
+ratingsMapRDD=ratingsNoHeaderRDD.map(lambda x : (int(x.split(',')[1]),1))
+
+#Creates a Dictionary with {Movie ID:Count}
+ratingsMapCountRDD_bykey=ratingsMapRDD.countByKey() 
+
+#Broadcasting the Diction data
+BC_Rating = sc.broadcast(ratingsMapCountRDD_bykey)
+
+#Created Function because of exception handling Index Out of Range because few ID which I am about to access are not available in the broadcast so contolling it by using Try and Catch
+def my_func(letter):
+    try:
+        return BC_Rating.value[letter] 
+    except:
+        return 0
+
+#Creating a Map set as (movie name,count) using Broadcast to call for count
+result = moviesMapRDD.map(lambda (x,y): (y,my_func(x)))
+
+#Swapping and sorting the data
+resultSwapped=result.map(lambda (a, b): (b, a)) 
+resultSortedRDD=resultSwapped.sortByKey(0, 1)
+resultRestoredRDD=resultSortedRDD.map(lambda (a, b): (b, a))
+
+#Printing Top 100 movies based on count of reviews received
+resultRestoredRDD.take(100)
+
+[(u'Pulp Fiction (1994)', 67310), (u'Forrest Gump (1994)', 66172), (u'"Shawshank Redemption', 63366), (u'"Silence of the Lambs', 63299), (u'Jurassic Park (1993)', 59715), (u'Star Wars: Episode IV - A New Hope (1977)', 54502), (u'Braveheart (1995)', 53769), (u'Terminator 2: Judgment Day (1991)', 52244), (u'"Matrix', 51334), (u"Schindler's List (1993)", 50054), (u'Toy Story (1995)', 49695), (u'"Fugitive', 49581), (u'Apollo 13 (1995)', 47777), (u'Independence Day (a.k.a. ID4) (1996)', 47048), (u'"Usual Suspects', 47006), (u'Star Wars: Episode VI - Return of the Jedi (1983)', 46839), (u'Batman (1989)', 46054), (u'Star Wars: Episode V - The Empire Strikes Back (1980)', 45313), (u'American Beauty (1999)', 44987), (u'Twelve Monkeys (a.k.a. 12 Monkeys) (1995)', 44980), (u'Dances with Wolves (1990)', 44208), (u'Raiders of the Lost Ark (Indiana Jones and the Raiders of the Lost Ark) (1981)', 43295), (u'Fargo (1996)', 43272), (u'Seven (a.k.a. Se7en) (1995)', 43249), (u'True Lies (1994)', 43159), (u'Aladdin (1992)', 41842), (u'Speed (1994)', 41562), (u'Back to the Future (1985)', 41426), (u'"Godfather', 41355), (u'Fight Club (1999)', 40106), (u'"Sixth Sense', 39028), (u'"Lion King', 38991), (u'Ace Ventura: Pet Detective (1994)', 38226), (u'"Lord of the Rings: The Fellowship of the Ring', 37553), (u'Mission: Impossible (1996)', 37127), (u'Saving Private Ryan (1998)', 37110), (u'Men in Black (a.k.a. MIB) (1997)', 35580), (u'Beauty and the Beast (1991)', 35138), (u'Mrs. Doubtfire (1993)', 34392), (u'"Mask', 34384), (u'"Lord of the Rings: The Two Towers', 33947), (u'Die Hard: With a Vengeance (1995)', 33940), (u'Pretty Woman (1990)', 33900), (u'"Terminator', 33429), (u'Monty Python and the Holy Grail (1975)', 33024), (u'Gladiator (2000)', 32878), (u'Batman Forever (1995)', 32867), (u'E.T. the Extra-Terrestrial (1982)', 32685), (u'"Princess Bride', 32586), (u'Twister (1996)', 32446), (u'Babe (1995)', 32255), (u'Titanic (1997)', 32238), (u'Dumb & Dumber (Dumb and Dumber) (1994)', 32085), (u'Groundhog Day (1993)', 32026), (u'Shrek (2001)', 31972), (u'Stargate (1994)', 31799), (u'"Lord of the Rings: The Return of the King', 31577), (u'"Rock', 31353), (u'Indiana Jones and the Last Crusade (1989)', 31280), (u'Alien (1979)', 30933), (u'Blade Runner (1982)', 30526), (u'Memento (2000)', 30443), (u'Die Hard (1988)', 30399), (u"One Flew Over the Cuckoo's Nest (1975)", 29932), (u'Star Wars: Episode I - The Phantom Menace (1999)', 29574), (u'Clear and Present Danger (1994)', 29571), (u'Ghost (1990)', 29488), (u'Ghostbusters (a.k.a. Ghost Busters) (1984)', 29381), (u'GoldenEye (1995)', 29005), (u'Sleepless in Seattle (1993)', 28805), (u'Home Alone (1990)', 28348), (u'Willy Wonka & the Chocolate Factory (1971)', 28335), (u'Good Will Hunting (1997)', 28324), (u'Waterworld (1995)', 27775), (u'Four Weddings and a Funeral (1994)', 27699), (u'"Fifth Element', 27660), (u'Reservoir Dogs (1992)', 27635), (u'Interview with the Vampire: The Vampire Chronicles (1994)', 27568), (u'"Godfather: Part II', 27398), (u'Aliens (1986)', 27206), (u'Being John Malkovich (1999)', 27160), (u'X-Men (2000)', 26846), (u'L.A. Confidential (1997)', 26836), (u'Goodfellas (1990)', 26406), (u'Star Trek: Generations (1994)', 26404), (u'Clueless (1995)', 26254), (u'Outbreak (1995)', 26246), (u'L\xe9on: The Professional (a.k.a. The Professional) (L\xe9on) (1994)', 25804), (u'"Firm', 25689), (u'Pirates of the Caribbean: The Curse of the Black Pearl (2003)', 25257), (u'2001: A Space Odyssey (1968)', 25253), (u'"Crouching Tiger', 25090), (u'Cliffhanger (1993)', 24940), (u'"Clockwork Orange', 24694), (u'Austin Powers: The Spy Who Shagged Me (1999)', 24651), (u'"Net', 24618), (u'Rain Man (1988)', 24591), (u"There's Something About Mary (1998)", 24582), (u'Shakespeare in Love (1998)', 24521), (u'Taxi Driver (1976)', 24481)]
