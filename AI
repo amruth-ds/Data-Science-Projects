@@ -1,0 +1,3 @@
+Consists from basic models with tensorflow till Keras
+Facedetection is done using opencv
+Obeject detection with Singleshotmultibox detector
